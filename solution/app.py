@@ -28,8 +28,11 @@ def messages_route():
         #state select statement to find the id to then put into messages 
         output_obj = conn.execute("select * from state") 
         results = output_obj.fetchall()
+       
         test2 =[]
+       
         foundmatchlist = [] 
+      
        # produced the object that holds both id and value of state  
         for row in results: 
             for index, statematch in enumerate(statematches) :
