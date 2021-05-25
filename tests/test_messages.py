@@ -5,7 +5,7 @@ import os
 
 class TestSchema(unittest.TestCase):
     def test_result(self):
-        r = requests.get(f"http://{os.getenv('HOST', 'localhost')}:5000/messages")
+        r = requests.get(f"localhost:5000/messages")
         res = r.json()
 
         should_res = [

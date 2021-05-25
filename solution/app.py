@@ -1,3 +1,5 @@
+
+import enum
 from flask import Flask, request, jsonify
 import sqlite3
 import json
@@ -15,10 +17,38 @@ def messages_route():
     """
 
     with sqlite3.connect(DBPATH) as conn:
-        messages_res = conn.execute("select body from messages")
-        messages = [m[0] for m in messages_res]
-        return jsonify(list(messages)), 200
+        
+        #message select statment 
+        messages_res = conn.execute("select body from messages") 
+        messages = [m[0] for m in messages_res ] 
+        
+        statematches = []
+        statematches = re.findall('(?<={)[^|]*(?=)',str(messages)) 
+       
+        #state select statement to find the id to then put into messages 
+        output_obj = conn.execute("select * from state") 
+        results = output_obj.fetchall()
+
+        foundmatchList = [] 
+       # produced the object that holds both id and value of state  
+        for row in results: 
+            for index, statematch in enumerate(statematches) :
+                row_as_dict = {output_obj.description[i][0]:row[i] for i in range(len(row))}  
+                if row_as_dict['id'] == statematch: 
+                    foundmatchList.append(row_as_dict)  
+
+        # there is an issue with this part of the replacment that i thought should work. 
+        for index, message in enumerate(messages) :  
+            for foundmatch in foundmatchList : 
+                messages[index] = messages[index].replace(str(foundmatch['id']),foundmatch['value'])
+         
+
+        return jsonify(messages), 200   
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
+
+# Thought Process 
+# i normally write code with camelCasing but i seen the way the code was presented to me and used the methodlogies that were present. 
+#  so how i went about finding the solution for this was through noticing the messages list and build another a list which made sen
