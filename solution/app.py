@@ -28,21 +28,24 @@ def messages_route():
         #state select statement to find the id to then put into messages 
         output_obj = conn.execute("select * from state") 
         results = output_obj.fetchall()
-
-        foundmatchList = [] 
+        test =[]
+        foundmatchlist = [] 
        # produced the object that holds both id and value of state  
         for row in results: 
             for index, statematch in enumerate(statematches) :
                 row_as_dict = {output_obj.description[i][0]:row[i] for i in range(len(row))}  
                 if row_as_dict['id'] == statematch: 
-                    foundmatchList.append(row_as_dict)  
+                    foundmatchlist.append(row_as_dict)  
 
         # there is an issue with this part of the replacment that i thought should work. 
         for index, message in enumerate(messages) :  
-            for foundmatch in foundmatchList : 
+            for foundmatch in foundmatchlist : 
                 messages[index] = messages[index].replace(str(foundmatch['id']),foundmatch['value'])
-         
+        
+           
+            test2 = re.sub('[{}|]','',str(messages)) 
 
+       
         return jsonify(messages), 200   
 
 
@@ -51,4 +54,6 @@ if __name__ == "__main__":
 
 # Thought Process 
 # i normally write code with camelCasing but i seen the way the code was presented to me and used the methodlogies that were present. 
-#  so how i went about finding the solution for this was through noticing the messages list and build another a list which made sen
+# so how i went about finding the solution for this was through noticing the messages list and build another a list which made sense 
+# to grab the correct id with the correct value which can later be used to replace the strings
+# lastly the strings in the message need to be removed {|} and the the values 
